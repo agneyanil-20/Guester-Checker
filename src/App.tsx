@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
-import { Radio, Play, CheckCircle2, ChevronRight, HelpCircle } from 'lucide-react';
+import { Play, CheckCircle2, ChevronRight, HelpCircle, Waves, Circle, Moon } from 'lucide-react';
 
 type SensorMode = 'Waiting...' | 'Generic Sensor' | 'Device Motion' | 'SW Filter';
 
@@ -11,11 +11,24 @@ interface GestureOption {
   probability: number; // 0 to 100
 }
 
+const renderGestureIcon = (id: string, className: string = "w-5 h-5") => {
+  switch (id) {
+    case 'circle':
+      return <Circle className={`${className} text-blue-400`} />;
+    case 'wave':
+      return <Waves className={`${className} text-emerald-400`} />;
+    case 'idle':
+      return <Moon className={`${className} text-purple-400`} />;
+    default:
+      return null;
+  }
+};
+
 export default function App() {
   // Default values requested: Circle 80%, Wave 10%, Idle 10%
   const [gestures, setGestures] = useState<GestureOption[]>([
     { id: 'circle', name: 'Circle', icon: '⭕', probability: 80 },
-    { id: 'wave', name: 'Wave', icon: '👋', probability: 10 },
+    { id: 'wave', name: 'Wave', icon: '🌊', probability: 10 },
     { id: 'idle', name: 'Idle', icon: '😴', probability: 10 },
   ]);
 
@@ -465,11 +478,9 @@ export default function App() {
         <div className="flex-1 overflow-y-auto flex flex-col no-scrollbar">
           {/* 1. Header Section */}
           <header className="p-6 pb-2 text-center shrink-0">
-            <h1 className="text-2xl font-bold tracking-tight text-white flex items-center justify-center gap-2">
-              <Radio className="w-5 h-5 text-[#3b82f6] animate-pulse" />
+            <h1 className="text-2xl font-black tracking-widest uppercase text-white flex items-center justify-center gap-2 font-sans">
               Gesture Classifier
             </h1>
-            <p className="text-[10px] uppercase tracking-widest text-gray-500 mt-1 font-semibold">Edge ML &middot; WebAssembly</p>
           </header>
 
           {/* 2. Info Text Section */}
@@ -507,18 +518,6 @@ export default function App() {
             )}
           </div>
 
-          {/* 4. Active Status Badge */}
-          <div className="px-6 py-2 flex justify-center shrink-0">
-            <div 
-              onClick={cycleSensorMode}
-              className="px-4 py-1.5 rounded-full bg-white/5 border border-white/10 flex items-center gap-2 cursor-pointer hover:bg-white/10 active:scale-95 transition-all"
-              title="Click to manually toggle sensor filtering"
-            >
-              <div className={`w-2 h-2 rounded-full ${sensorActive ? 'bg-emerald-500 shadow-[0_0_8px_#10b981]' : 'bg-amber-500 shadow-[0_0_8px_#f59e0b]'}`} />
-              <span className="text-xs font-mono text-blue-400 uppercase tracking-wider">{sensorMode}</span>
-            </div>
-          </div>
-
           {/* 5. Waveform Canvas Section */}
           <div className="px-6 py-4 shrink-0">
             <div id="waveform" className="w-full h-[120px] bg-black/40 border border-white/10 rounded-xl relative overflow-hidden">
@@ -545,12 +544,12 @@ export default function App() {
                   onClick={() => handleGestureManualClick(item.id)}
                   className={`p-4 backdrop-blur-xl border rounded-2xl flex items-center gap-4 cursor-pointer select-none transition-all duration-300 ${
                     isTop
-                      ? 'relative bg-white/10 border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.3)] animate-border-glow'
+                      ? 'relative bg-white/10 border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.3)]'
                       : 'bg-white/5 border-white/10 opacity-60 hover:opacity-90'
                   }`}
                 >
                   <div className="flex items-center gap-2 w-16 shrink-0">
-                    <span className="text-lg">{item.icon}</span>
+                    {renderGestureIcon(item.id, "w-5 h-5")}
                     <span className="text-sm font-bold text-neutral-100">{item.name}</span>
                   </div>
 
@@ -574,7 +573,7 @@ export default function App() {
           {/* 7. Bottom Result Badge */}
           <div className="p-6 pt-2 shrink-0">
             <div className="w-full p-6 bg-blue-500/20 border border-blue-500/30 rounded-3xl flex items-center justify-center gap-4 shadow-[0_4px_20px_rgba(59,130,246,0.15)]">
-              <span className="text-4xl animate-bounce duration-1000 select-none">{topGesture.icon}</span>
+              {renderGestureIcon(topGesture.id, "w-10 h-10")}
               <span className="text-3xl font-black uppercase tracking-tighter text-white">{topGesture.name}</span>
             </div>
           </div>
