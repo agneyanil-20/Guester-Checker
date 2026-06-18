@@ -35,6 +35,7 @@ export default function App() {
   const [sensorActive, setSensorActive] = useState<boolean>(false);
   const [sensorMode, setSensorMode] = useState<SensorMode>('Waiting...');
   const [permissionError, setPermissionError] = useState<string | null>(null);
+  const [liveValues, setLiveValues] = useState<{ x: number; y: number; z: number }>({ x: 0, y: 0, z: 0 });
 
   // References for live rendering raw coordinates
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -159,6 +160,8 @@ export default function App() {
       buf[1122] = x;
       buf[1123] = y;
       buf[1124] = z;
+
+      setLiveValues({ x, y, z });
 
       // Classify gestures dynamically if sensors are active
       let classifiedByWasm = false;
@@ -516,6 +519,57 @@ export default function App() {
                 ⚠️ {permissionError}
               </p>
             )}
+          </div>
+
+          {/* 4. Live Axis Value Cards */}
+          <div className="px-6 py-2 flex flex-col gap-2 shrink-0">
+            {/* X Axis */}
+            <div 
+              className="p-3 backdrop-blur-xl border border-white/10 bg-white/5 rounded-2xl flex justify-between items-center border-l-4 transition-all duration-200 hover:bg-white/10"
+              style={{ borderLeftColor: '#3b82f6' }}
+            >
+              <div className="flex flex-col">
+                <span className="text-[10px] font-mono font-bold tracking-wider text-[#3b82f6] uppercase">X Axis</span>
+                <span className="text-xl font-black font-mono text-white mt-0.5">
+                  {liveValues.x.toFixed(2)}
+                </span>
+              </div>
+              <div className="w-1.5 h-6 bg-[#3b82f6]/20 rounded-full overflow-hidden">
+                <div className="bg-[#3b82f6] h-full rounded-full w-full" />
+              </div>
+            </div>
+
+            {/* Y Axis */}
+            <div 
+              className="p-3 backdrop-blur-xl border border-white/10 bg-white/5 rounded-2xl flex justify-between items-center border-l-4 transition-all duration-200 hover:bg-white/10"
+              style={{ borderLeftColor: '#22c55e' }}
+            >
+              <div className="flex flex-col">
+                <span className="text-[10px] font-mono font-bold tracking-wider text-[#3b82f6] uppercase">Y Axis</span>
+                <span className="text-xl font-black font-mono text-white mt-0.5">
+                  {liveValues.y.toFixed(2)}
+                </span>
+              </div>
+              <div className="w-1.5 h-6 bg-[#22c55e]/20 rounded-full overflow-hidden">
+                <div className="bg-[#22c55e] h-full rounded-full w-full" />
+              </div>
+            </div>
+
+            {/* Z Axis */}
+            <div 
+              className="p-3 backdrop-blur-xl border border-white/10 bg-white/5 rounded-2xl flex justify-between items-center border-l-4 transition-all duration-200 hover:bg-white/10"
+              style={{ borderLeftColor: '#a855f7' }}
+            >
+              <div className="flex flex-col">
+                <span className="text-[10px] font-mono font-bold tracking-wider text-[#3b82f6] uppercase">Z Axis</span>
+                <span className="text-xl font-black font-mono text-white mt-0.5">
+                  {liveValues.z.toFixed(2)}
+                </span>
+              </div>
+              <div className="w-1.5 h-6 bg-[#a855f7]/20 rounded-full overflow-hidden">
+                <div className="bg-[#a855f7] h-full rounded-full w-full" />
+              </div>
+            </div>
           </div>
 
           {/* 5. Waveform Canvas Section */}
